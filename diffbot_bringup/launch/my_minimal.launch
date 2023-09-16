@@ -1,0 +1,27 @@
+<launch>
+  <!-- Minimal launch file to bringup the robot hardware -->
+  <!-- This launch file will launch the package that communicates with the encoders
+       before running the ROS Controls hardware_interface control loop.
+       Note: roslaunch launches local processes using popen and kills them using POSIX signals. 
+       roslaunch does not guarantee any particular order to the startup of nodes. 
+       In the ROS architecture there is no way to tell when a node is initialized.
+       See also http://wiki.ros.org/roslaunch/Architecture#Local_processes. -->
+
+  <!--arg name="model" default="$(env DIFFBOT_MODEL)" doc="model type [diffbot, remo]"/-->
+  <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+  
+  <!-- Base Controller for Motor Driver, Encoders and IMU -->
+  <!-- Run rosserial to connect with the Teensy 3.2 board connected to the motor encoders -->
+  <!-- ************ -->
+  <!-- NO ROSSERIAL -->
+  <!-- ************ -->
+  
+  <!-- Including the following launch file from diffbot_base package will -->
+  <!-- Load the robot description onto the parameter server -->
+  <!-- Run the controller manager with DiffBot's hardware interface -->
+  <!-- Load the controller config onto the parameter server -->
+  <include file="$(find diffbot_base)/launch/my_diff_base.launch">
+      <arg name="model" value="$(arg model)" />
+  </include>
+
+</launch>

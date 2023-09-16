@@ -1,0 +1,22 @@
+<launch>
+    <!-- 
+        Launch file follows: 
+        http://gazebosim.org/tutorials?tut=ros_control#Createaroslaunchfile
+    -->
+    <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+
+    <!-- Load controller configurations from YAML file to parameter server -->
+    <rosparam command="load"
+        file="$(find diffbot_control)/config/diffbot_control.yaml"/>
+
+    <rosparam command="load"
+        file="$(find diffbot_control)/config/pid.yaml"/>
+
+    <!-- convert joint states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        ns="diffbot" respawn="false" output="screen">
+        <remap from="/joint_states" to="/diffbot/joint_states" />
+        <!-- param name="publish_frequency" type="double" value="30.0" /-->
+    </node>
+
+</launch>
