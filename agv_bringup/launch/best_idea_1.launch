@@ -1,0 +1,37 @@
+<launch>
+  <!-- Use this launch file for navigation simulation -->
+  <!--This launches gazebo itself. Don't launch gazebo explicitly before this  -->
+  <!-- Arguments -->
+  <!--arg name="model" default="$(env DIFFBOT_MODEL)" doc="model type [diffbot, remo]"/-->
+  <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+
+  <arg name="map_file" default="$(find agv_bringup)/map/final.yaml"/>
+
+  <include file="$(find diffbot_gazebo)/launch/123.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  !-- AMCL -->
+  <!--include file="$(find diffbot_navigation)/launch/amcl_best_idea.launch">
+    <arg name="model" value="$(arg model)" />
+  </include-->
+  <include file="$(find amcl)/examples/best_idea_2.launch">
+  </include>
+
+  <!-- Old rviz here -->
+  
+  !--Run RVIZ -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d$(find amcl_rviz/amcl.rviz"/>
+  
+  <!--include file="$(find rplidar_ros)/launch/rplidar.launch">
+  </include-->
+  
+  <!-- Final Touch -->
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 odom base_link"/-->
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser" args="0 0 0 0 0 0 base_link laser"/-->
+  
+
+</launch>

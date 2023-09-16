@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="map_file" default="$(find agv_bringup)/map/best_idea.yaml"/>
+  <arg name="model" default="$(find agv_bringup)/urdf/mobile_robot.urdf"/>
+  
+  <!-- This part we need for the base_link tf tree-->
+  <rosparam file="$(find mobile_robot_autonomous_navigation)/config/controllers.yaml" command="load"/>
+  <rosparam file="$(find mobile_robot_autonomous_navigation)/config/joint_limits.yaml" command="load"/>
+  
+  
+  <!-- Do we really need this? 
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+  < It did not worked -->
+  <!-- But now the discription param will be available: -->
+  !-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description" command="$(arg model)"/>
+  
+  <!-- Maybe this part wont work properly because of the amount of dependencies and libraries >
+  <node name="robot_hardware_interface" pkg="mobile_robot_autonomous_navigation" type="mobile_robot_hardware_interface" output="screen">
+    <remap from="/mobile_robot/mobile_base_controller/cmd_vel" to="/cmd_vel"/>
+   </node>
+   -->
+
+  <!-- Defenetly needed! -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" >
+  </node>
+  
+  <!-- Rviz for visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" args=" " />
+  
+  <!-- This part probably is not needed but let it try -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+        args="
+            /mobile_robot/joints_update
+            /mobile_robot/mobile_base_controller" >
+  </node>
+
+
+  <!-- Call map best idea -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+  </node>
+  
+  <!-- This part is not used by me *******************************
+  <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+  <include file="$(find mobile_robot_autonomous_navigation)/launch/amcl.launch" />
+  <include file="$(find mobile_robot_autonomous_navigation)/launch/move_base.launch" /> 
+  **********************************-->
+  
+</launch>

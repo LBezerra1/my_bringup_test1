@@ -1,0 +1,31 @@
+<launch>
+ 
+  <arg name="model" default="diffbot" doc="model type [diffbot, remo]"/>
+  <arg name="map_file" default="$(find agv_bringup)/map/my_map.yaml"/>
+
+  <!-- Map server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+  
+  <!-- Make odom happen -->
+  <include file="$(find diffbot_bringup)/launch/my_bringup.launch"/>
+
+  !-- AMCL -->
+  <include file="$(find diffbot_navigation)/launch/my_amcl.launch"/>
+
+  <!-- Old rviz here -->
+  
+  !--Run RVIZ -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d$(find amcl_rviz/amcl.rviz"/>
+  
+  <!-- Call scan_reverse in this machine to simulate the rplidar_laser_link -->
+  <!-- It takes the /scan from rplidar in robot and tranform in /diffbot/scan -->
+  <!--include file="$(find rplidar_ros)/launch/rplidar.launch">
+  </include-->
+  <node name="scan_reverse" pkg="my_agv" type="scan_reverse.py">
+  </node>
+  
+  <!-- Final Touch -->
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 odom base_link"/-->
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser" args="0 0 0 0 0 0 base_link laser"/-->
+
+</launch>
